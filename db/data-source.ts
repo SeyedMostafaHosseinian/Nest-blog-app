@@ -11,8 +11,8 @@ export const ormconfig: DataSourceOptions = {
   username: process.env?.DB_USERNAME,
   database: process.env?.DB_NAME,
   entities: ['dist/**/*.entity.js'],
-  migrations:['dist/db/migrations/*.js']
+  migrations: ['dist/db/migrations/*.js'],
 };
- 
+
 const dataSource = new DataSource(ormconfig);
 export default dataSource;
