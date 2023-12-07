@@ -74,11 +74,6 @@ export class UserService {
     return await this.userRepository.find();
   }
 
-  getCurrentUser(request: AppRequest): UserResponseInerface {
-    if (!request.user) throw new NotFoundException('User not found!');
-    return this.createUserResponse(request.user);
-  }
-
   async findUserById(id: string): Promise<UserEntity> {
     return await this.userRepository.findOneBy({ id });
   }

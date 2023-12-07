@@ -7,14 +7,15 @@ import {
   Param,
   Delete,
   Req,
+  NotFoundException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseInerface } from './types/user-response.interface';
 import { UserLoginDto } from './dto/login-user.dto';
-import { AppRequest } from 'src/types/app-request.interface';
 import { UserEntity } from './entities/user.entity';
+import { User } from 'src/decorators/user.decorator';
 
 @Controller('users')
 export class UserController {
@@ -40,8 +41,9 @@ export class UserController {
   }
 
   @Get('user')
-  findOne(@Req() request: AppRequest): UserResponseInerface {
-    return this.userService.getCurrentUser(request);
+  findOne(@User() user: UserEntity): UserResponseInerface {
+    if (!user) throw new NotFoundException('User not found!');
+    return this.userService.createUserResponse(user)
   }
 
   @Patch(':id')
