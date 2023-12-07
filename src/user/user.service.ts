@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotAcceptableException, UnprocessableEntityException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
@@ -17,7 +17,14 @@ export class UserService {
   async createUser(
     createUserDto: CreateUserDto,
   ): Promise<UserResponseInerface> {
-    
+
+    //check username and email 
+    const existUserByEmail = await this.userRepository.findOneBy({email: createUserDto.email});
+    const existUserByUsername = await this.userRepository.findOneBy({username: createUserDto.username});
+
+    if(existUserByEmail || existUserByUsername) {
+      throw new UnprocessableEntityException('username or email already taken')
+    }    
     //create user object
     const newUser = new UserEntity();
     Object.assign(newUser, createUserDto);
