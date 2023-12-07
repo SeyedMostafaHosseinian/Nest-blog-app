@@ -1,24 +1,23 @@
-import { UserLoginDto } from './dto/login-user.dto';
 import {
-  ConflictException,
   Injectable,
-  NotAcceptableException,
   NotFoundException,
   UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import { UserResponseInerface } from './types/user-response.interface';
+import { UserLoginDto } from './dto/login-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { sign } from 'jsonwebtoken';
-import { UserResponseInerface } from './types/user-response.interface';
 import { compare } from 'bcrypt';
+import { AppRequest } from 'src/types/app-request.interface';
 
 @Injectable()
 export class UserService {
-  constructor(
+  constructor( 
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
   ) {}
@@ -75,8 +74,13 @@ export class UserService {
     return await this.userRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  getCurrentUser(request: AppRequest): UserResponseInerface {
+    if (!request.user) throw new NotFoundException('User not found!');
+    return this.createUserResponse(request.user);
+  }
+
+  async findUserById(id: string): Promise<UserEntity> {
+    return await this.userRepository.findOneBy({ id });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

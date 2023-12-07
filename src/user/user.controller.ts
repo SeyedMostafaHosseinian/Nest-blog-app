@@ -6,12 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseInerface } from './types/user-response.interface';
 import { UserLoginDto } from './dto/login-user.dto';
+import { AppRequest } from 'src/types/app-request.interface';
+import { UserEntity } from './entities/user.entity';
 
 @Controller('users')
 export class UserController {
@@ -32,13 +35,13 @@ export class UserController {
   }
 
   @Get()
-  findAll() {
+  findAll(): Promise<UserEntity[]> {
     return this.userService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+  @Get('user')
+  findOne(@Req() request: AppRequest): UserResponseInerface {
+    return this.userService.getCurrentUser(request);
   }
 
   @Patch(':id')
