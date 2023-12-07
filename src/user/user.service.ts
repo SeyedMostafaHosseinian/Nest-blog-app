@@ -4,6 +4,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { sign, decode } from 'jsonwebtoken';
+import { UserResponseInerface } from './types/user-response.interface';
 
 @Injectable()
 export class UserService {
@@ -12,10 +14,19 @@ export class UserService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async createUser(createUserDto: CreateUserDto): Promise<UserEntity> {
+  async createUser(
+    createUserDto: CreateUserDto,
+  ): Promise<UserResponseInerface> {
+    
+    //create user object
     const newUser = new UserEntity();
     Object.assign(newUser, createUserDto);
-    return await this.userRepository.save(newUser);
+
+    //save user into database 
+    const savedUser = await this.userRepository.save(newUser);
+
+    //create response object and return it
+    return this.createUserResponse(savedUser);
   }
 
   async findAll(): Promise<UserEntity[]> {
@@ -32,5 +43,32 @@ export class UserService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  generateJwt(user: UserEntity): string {
+    return sign(
+      //payload
+      {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+      },
+      //secret-key
+      process.env?.JWT_ACCESS_TOKEN_SECRET_KEY,
+      //options
+      {
+        expiresIn: process.env?.JWT_EXPIRY_TIME || '3d',
+      },
+    );
+  }
+
+  createUserResponse(user: UserEntity): UserResponseInerface {
+    const token = this.generateJwt(user);
+    return {
+      user: {
+        ...user,
+        token,
+      },
+    };
   }
 }
