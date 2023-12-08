@@ -1,11 +1,11 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TagsModule } from './tags/tags.module';
+import { TagsModule } from './modules/tags/tags.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ormconfig } from '../db/data-source';
-import { UserModule } from './user/user.module';
+import { UserModule } from './modules/user/user.module';
 import { AuthMiddleware } from './middlewares/auth.middleware';
 
 @Module({

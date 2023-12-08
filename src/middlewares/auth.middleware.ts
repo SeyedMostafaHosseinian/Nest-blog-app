@@ -1,6 +1,6 @@
-import { UserService } from './../user/user.service';
+import { UserService } from '../modules/user/user.service';
 import { Injectable, NestMiddleware } from '@nestjs/common';
-import { AppRequest } from 'src/types/app-request.interface';
+import { AppRequest } from '../types/app-request.interface';
 import { JwtPayload, verify } from 'jsonwebtoken';
 
 @Injectable()
