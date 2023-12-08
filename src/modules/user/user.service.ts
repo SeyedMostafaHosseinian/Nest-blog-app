@@ -14,10 +14,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { sign } from 'jsonwebtoken';
 import { compare } from 'bcrypt';
 import { AppRequest } from 'src/types/app-request.interface';
+import { threadId } from 'worker_threads';
 
 @Injectable()
 export class UserService {
-  constructor( 
+  constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
   ) {}
@@ -78,8 +79,15 @@ export class UserService {
     return await this.userRepository.findOneBy({ id });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UserResponseInerface> {
+    const user = await this.findUserById(id);
+    Object.assign(user, updateUserDto);
+
+    const updatedUser = await this.userRepository.save(user);
+    return this.createUserResponse(updatedUser);
   }
 
   remove(id: number) {

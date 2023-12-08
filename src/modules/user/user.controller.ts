@@ -43,12 +43,16 @@ export class UserController {
   @Get('user')
   @UseGuards(AuthGuard)
   findOne(@User() user: UserEntity): UserResponseInerface {
-    return this.userService.createUserResponse(user)
+    return this.userService.createUserResponse(user);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  @Patch('user')
+  @UseGuards(AuthGuard)
+  update(
+    @User('id') userId: string,
+    @Body('user') updateUserDto: UpdateUserDto,
+  ): Promise<UserResponseInerface> {
+    return this.userService.update(userId, updateUserDto);
   }
 
   @Delete(':id')
