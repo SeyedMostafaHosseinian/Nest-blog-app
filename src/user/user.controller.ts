@@ -6,8 +6,7 @@ import {
   Patch,
   Param,
   Delete,
-  Req,
-  NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -16,6 +15,7 @@ import { UserResponseInerface } from './types/user-response.interface';
 import { UserLoginDto } from './dto/login-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { User } from 'src/decorators/user.decorator';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('users')
 export class UserController {
@@ -41,8 +41,8 @@ export class UserController {
   }
 
   @Get('user')
+  @UseGuards(AuthGuard)
   findOne(@User() user: UserEntity): UserResponseInerface {
-    if (!user) throw new NotFoundException('User not found!');
     return this.userService.createUserResponse(user)
   }
 
