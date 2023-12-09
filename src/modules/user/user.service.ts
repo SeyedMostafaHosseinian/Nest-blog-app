@@ -72,7 +72,11 @@ export class UserService {
   }
 
   async findAll(): Promise<UserEntity[]> {
-    return await this.userRepository.find();
+    return await this.userRepository.find({
+      relations: {
+        articles: true,
+      },
+    });
   }
 
   async findUserById(id: string): Promise<UserEntity> {
