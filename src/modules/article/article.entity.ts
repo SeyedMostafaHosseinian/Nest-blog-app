@@ -2,10 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  PrimaryColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { UserEntity } from '../user/entities/user.entity';
 
 @Entity({ name: 'articles' })
 export class ArticleEntity {
@@ -35,4 +36,7 @@ export class ArticleEntity {
 
   @UpdateDateColumn()
   updated_at: string;
+
+  @ManyToOne(() => UserEntity, (user) => user.articles)
+  author: UserEntity;
 }
