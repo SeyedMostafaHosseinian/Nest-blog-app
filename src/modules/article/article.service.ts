@@ -66,11 +66,12 @@ export class ArticleService {
     updateArticleDto: UpdateArticleDto,
     currentUser: UserEntity,
   ): Promise<ArticleEntity> {
-    
+
     const article = await this.articleRepository.findOneBy({ slug });
     if (!article) throw new NotFoundException('Article Not found!');
 
     Object.assign(article, updateArticleDto);
+    article.slug = this.createSlug(article)
     article.updaterAuthor = currentUser
     
     return await this.articleRepository.save(article);
