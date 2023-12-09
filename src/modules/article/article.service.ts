@@ -9,6 +9,7 @@ import { UserEntity } from '../user/entities/user.entity';
 import { DeleteResult, Repository } from 'typeorm';
 import { ArticleEntity } from './article.entity';
 import { ArticleResponseInterface } from './types/article-response.interface';
+import { UpdateArticleDto } from './dto/update-article.dto';
 
 @Injectable()
 export class ArticleService {
@@ -58,6 +59,21 @@ export class ArticleService {
       );
     }
     return await this.articleRepository.delete({ slug: article.slug });
+  }
+
+  async updateArticle(
+    slug: string,
+    updateArticleDto: UpdateArticleDto,
+    currentUser: UserEntity,
+  ): Promise<ArticleEntity> {
+    
+    const article = await this.articleRepository.findOneBy({ slug });
+    if (!article) throw new NotFoundException('Article Not found!');
+
+    Object.assign(article, updateArticleDto);
+    article.updaterAuthor = currentUser
+    
+    return await this.articleRepository.save(article);
   }
 
   createSlug(article: ArticleEntity): string {

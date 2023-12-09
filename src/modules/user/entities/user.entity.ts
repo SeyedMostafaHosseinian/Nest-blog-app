@@ -31,6 +31,9 @@ export class UserEntity {
   @OneToMany(() => ArticleEntity, (article) => article.author)
   articles: ArticleEntity[];
 
+  @OneToMany(() => ArticleEntity, (article) => article.updaterAuthor)
+  contributedArticles: ArticleEntity[];
+
   @BeforeInsert()
   async hashPassword() {
     this.password = await hash(this.password, 10);

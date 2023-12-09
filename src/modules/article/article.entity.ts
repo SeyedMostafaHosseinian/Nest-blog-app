@@ -39,4 +39,7 @@ export class ArticleEntity {
 
   @ManyToOne(() => UserEntity, (user) => user.articles, { eager: true })
   author: UserEntity;
+
+  @ManyToOne(() => UserEntity, (user) => user.contributedArticles, { eager: true })
+  updaterAuthor: UserEntity;
 }
