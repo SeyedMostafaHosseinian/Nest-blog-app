@@ -1,11 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../user/entities/user.entity';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { ArticleEntity } from './article.entity';
 import { ArticleResponseInterface } from './types/article-response.interface';
-import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class ArticleService {
@@ -18,8 +21,8 @@ export class ArticleService {
     currentUser: UserEntity,
     createArticleDto: CreateArticleDto,
   ): Promise<ArticleEntity> {
-
     const newArticle = new ArticleEntity();
+
     if (!createArticleDto?.tags) newArticle.tagsList = [];
 
     Object.assign(newArticle, createArticleDto);
@@ -29,17 +32,32 @@ export class ArticleService {
     return await this.articleRepository.save(newArticle);
   }
 
+  /** @todo: we should'nt display password in the following query result */
   async getAllArticles(): Promise<ArticleEntity[]> {
-    return await this.articleRepository.find({
-      relations: { author: true },
-    });
+    return await this.articleRepository.find();
   }
 
-  async getArticleBySlug(slug: string):Promise<ArticleResponseInterface> {
+  /** @todo: we should'nt display password in the following query result */
+  async getArticleBySlug(slug: string): Promise<ArticleEntity> {
     const article = await this.articleRepository.findOneBy({ slug });
     if (!article) throw new NotFoundException('Article not found!');
+    return article;
+  }
 
-    return this.createArticleResponse(article);
+  async deleteArticle(
+    slug: string,
+    currentUserId: string,
+  ): Promise<DeleteResult> {
+    const article = await this.getArticleBySlug(slug);
+
+    if (!article) throw new NotFoundException('Article not found');
+
+    if (article.author.id !== currentUserId) {
+      throw new ForbiddenException(
+        'just Author of this article can delete this article',
+      );
+    }
+    return await this.articleRepository.delete({ slug: article.slug });
   }
 
   createSlug(article: ArticleEntity): string {
@@ -49,7 +67,7 @@ export class ArticleService {
       ((Math.random() * Math.pow(36, 6)) | 0)
     );
   }
-  
+
   createArticleResponse(article: ArticleEntity): ArticleResponseInterface {
     return { article };
   }

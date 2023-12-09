@@ -37,6 +37,6 @@ export class ArticleEntity {
   @UpdateDateColumn()
   updated_at: string;
 
-  @ManyToOne(() => UserEntity, (user) => user.articles)
+  @ManyToOne(() => UserEntity, (user) => user.articles, { eager: true })
   author: UserEntity;
 }

@@ -1,11 +1,20 @@
 import { AuthGuard } from 'src/guards/auth.guard';
 import { ArticleService } from './article.service';
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { User } from 'src/decorators/user.decorator';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { ArticleEntity } from './article.entity';
 import { UserEntity } from '../user/entities/user.entity';
 import { ArticleResponseInterface } from './types/article-response.interface';
+import { DeleteResult } from 'typeorm';
 
 @Controller('articles')
 export class ArticleController {
@@ -13,11 +22,15 @@ export class ArticleController {
   /** create article */
   @Post()
   @UseGuards(AuthGuard)
-  createArticle(
+  async createArticle(
     @User() currentUser: UserEntity,
     @Body('article') createArticleDto: CreateArticleDto,
-  ): Promise<ArticleEntity> {
-    return this.articleService.createArticle(currentUser, createArticleDto);
+  ): Promise<ArticleResponseInterface> {
+    const article = await this.articleService.createArticle(
+      currentUser,
+      createArticleDto,
+    );
+    return this.articleService.createArticleResponse(article);
   }
 
   /** get all article */
@@ -28,8 +41,20 @@ export class ArticleController {
 
   /** get single article by slug */
   @Get(':slug')
-  getArticleBySlug(@Param('slug') slug:string): Promise<ArticleResponseInterface> {
-    return this.articleService.getArticleBySlug(slug);
+  async getArticleBySlug(
+    @Param('slug') slug: string,
+  ): Promise<ArticleResponseInterface> {
+    const article = await this.articleService.getArticleBySlug(slug);
+    return this.articleService.createArticleResponse(article);
   }
 
+  /** delete article */
+  @Delete(':slug')
+  @UseGuards(AuthGuard)
+  deleteArticle(
+    @Param('slug') slug: string,
+    @User('id') currentUserId: string,
+  ): Promise<DeleteResult> {
+    return this.articleService.deleteArticle(slug, currentUserId);
+  }
 }
