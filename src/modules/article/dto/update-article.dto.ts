@@ -1,4 +1,4 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional } from 'class-validator';
 export class UpdateArticleDto {
   @IsNotEmpty()
   title: string;
@@ -8,4 +8,8 @@ export class UpdateArticleDto {
 
   @IsNotEmpty()
   description: string;
+
+  @IsOptional()
+  @IsArray()
+  tagsList?:string[]
 }
