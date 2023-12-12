@@ -1,3 +1,4 @@
+import { ArticleController } from './article.controller';
 import {
   ForbiddenException,
   Injectable,
@@ -10,6 +11,7 @@ import { DeleteResult, Repository } from 'typeorm';
 import { ArticleEntity } from './article.entity';
 import { ArticleResponseInterface } from './types/article-response.interface';
 import { UpdateArticleDto } from './dto/update-article.dto';
+import { GetAllArticlesDto } from './dto/get-all-articles.dto';
 
 @Injectable()
 export class ArticleService {
@@ -23,10 +25,10 @@ export class ArticleService {
     createArticleDto: CreateArticleDto,
   ): Promise<ArticleEntity> {
     const newArticle = new ArticleEntity();
-
     if (!createArticleDto?.tags) newArticle.tagsList = [];
-
+    newArticle.tagsList = createArticleDto.tags;
     Object.assign(newArticle, createArticleDto);
+    console.log(newArticle);
     newArticle.author = currentUser;
     newArticle.slug = this.createSlug(newArticle);
 
@@ -34,8 +36,27 @@ export class ArticleService {
   }
 
   /** @todo: we should'nt display password in the following query result */
-  async getAllArticles(): Promise<ArticleEntity[]> {
-    return await this.articleRepository.find();
+  async getAllArticles(query: GetAllArticlesDto): Promise<ArticleEntity[]> {
+    const limit = 5;
+    const { author, tag, page, orderByCreation } = query;
+    const qb = this.articleRepository
+      .createQueryBuilder('articles')
+      .leftJoinAndSelect('articles.author', 'author')
+      .leftJoinAndSelect('articles.updaterAuthor', 'updaterAuthor')
+      .take(limit)
+      .orderBy(
+        'articles.created_at',
+        orderByCreation === 'newest' || orderByCreation === undefined
+          ? 'DESC'
+          : 'ASC',
+      )
+      .skip(((page || 1) - 1) * limit);
+
+    if (author) qb.where('author.username = :author', { author });
+
+    if (tag) qb.andWhere('articles.tagsList LIKE :tag', { tag: `%${tag}%` });
+
+    return await qb.getMany();
   }
 
   /** @todo: we should'nt display password in the following query result */
@@ -49,7 +70,11 @@ export class ArticleService {
     slug: string,
     currentUserId: string,
   ): Promise<DeleteResult> {
-    const article = await this.getArticleBySlug(slug);
+    const article = await this.articleRepository
+      .createQueryBuilder('articles')
+      .leftJoinAndSelect('articles.author', 'author')
+      .where('articles.slug = :slug', { slug })
+      .getOne();
 
     if (!article) throw new NotFoundException('Article not found');
 
@@ -66,21 +91,20 @@ export class ArticleService {
     updateArticleDto: UpdateArticleDto,
     currentUser: UserEntity,
   ): Promise<ArticleEntity> {
-
     const article = await this.articleRepository.findOneBy({ slug });
     if (!article) throw new NotFoundException('Article Not found!');
 
     Object.assign(article, updateArticleDto);
-    article.slug = this.createSlug(article)
-    article.updaterAuthor = currentUser
-    
+    article.slug = this.createSlug(article);
+    article.updaterAuthor = currentUser;
+
     return await this.articleRepository.save(article);
   }
 
   createSlug(article: ArticleEntity): string {
     return (
-      article.title.replace(' ', '-') +
-      '-' +
+      article.title.split(' ').join('-') +
+      '--' +
       ((Math.random() * Math.pow(36, 6)) | 0)
     );
   }

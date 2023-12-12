@@ -9,6 +9,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { User } from 'src/decorators/user.decorator';
@@ -17,6 +18,7 @@ import { ArticleEntity } from './article.entity';
 import { UserEntity } from '../user/entities/user.entity';
 import { ArticleResponseInterface } from './types/article-response.interface';
 import { DeleteResult } from 'typeorm';
+import { GetAllArticlesDto } from './dto/get-all-articles.dto';
 
 @Controller('articles')
 export class ArticleController {
@@ -37,8 +39,11 @@ export class ArticleController {
 
   /** get all article */
   @Get()
-  getAllArticles(): Promise<ArticleEntity[]> {
-    return this.articleService.getAllArticles();
+  getAllArticles(
+    @Query()
+    getAllArticlesQuery: GetAllArticlesDto
+  ): Promise<ArticleEntity[]> {
+    return this.articleService.getAllArticles(getAllArticlesQuery);
   }
 
   /** get single article by slug */
