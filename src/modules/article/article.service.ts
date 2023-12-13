@@ -67,6 +67,44 @@ export class ArticleService {
     return article;
   }
 
+  async dislikeAndRemoveFavoriteArticle(
+    currentUserId: string,
+    slug: string,
+  ): Promise<ArticleEntity> {
+    
+    const article = await this.articleRepository.findOneBy({ slug });
+    if (!article) throw new NotFoundException('Article Not found!');
+
+    const user = await this.userRepository.findOne({
+      where: { id: currentUserId },
+      relations: { favortiedArticles: true },
+    });
+    if (!user) throw new NotFoundException('User Not found!');
+
+    const isFavorited =
+      user.favortiedArticles.findIndex(
+        (favoritedArticle) => favoritedArticle.id === article.id,
+      ) !== -1;
+
+    if (isFavorited) {
+      user.favortiedArticles = user.favortiedArticles.filter(
+        (favoritedArticle) => favoritedArticle.id !== article.id,
+      );
+
+      article.likesCount--;
+
+      await this.userRepository.save(user);
+      await this.articleRepository.save(article);
+
+    } else {
+      throw new ForbiddenException(
+        'User not liked this article. so cannot dislike this article!',
+      );
+    }
+
+    return article;
+  }
+
   /** @todo: we should'nt display password in the following query result */
   async getAllArticles(query: GetAllArticlesDto): Promise<ArticleEntity[]> {
     const limit = 5;

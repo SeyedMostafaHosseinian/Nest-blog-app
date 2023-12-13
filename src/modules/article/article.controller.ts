@@ -51,6 +51,20 @@ export class ArticleController {
     return this.articleService.createArticleResponse(article);
   }
 
+  /** dislike article */
+  @Delete(':slug/favorite')
+  @UseGuards(AuthGuard)
+  async dislikeArticle(
+    @User('id') currentUserId: string,
+    @Param('slug') slug: string,
+  ): Promise<ArticleResponseInterface> {
+    const article = await this.articleService.dislikeAndRemoveFavoriteArticle(
+      currentUserId,
+      slug,
+    );
+    return this.articleService.createArticleResponse(article);
+  }
+
   /** get all article */
   @Get()
   getAllArticles(
