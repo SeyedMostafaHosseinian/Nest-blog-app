@@ -8,6 +8,7 @@ import { ormconfig } from '../db/data-source';
 import { UserModule } from './modules/user/user.module';
 import { AuthMiddleware } from './middlewares/auth.middleware';
 import { ArticleModule } from './modules/article/article.module';
+import { ProfileModule } from './modules/profile/profile.module';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { ArticleModule } from './modules/article/article.module';
     TypeOrmModule.forRoot(ormconfig),
     TagsModule,
     UserModule,
-    ArticleModule
+    ArticleModule,
+    ProfileModule,
   ],
   controllers: [AppController],
   providers: [AppService],
