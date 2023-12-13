@@ -71,7 +71,6 @@ export class ArticleService {
     currentUserId: string,
     slug: string,
   ): Promise<ArticleEntity> {
-    
     const article = await this.articleRepository.findOneBy({ slug });
     if (!article) throw new NotFoundException('Article Not found!');
 
@@ -95,7 +94,6 @@ export class ArticleService {
 
       await this.userRepository.save(user);
       await this.articleRepository.save(article);
-
     } else {
       throw new ForbiddenException(
         'User not liked this article. so cannot dislike this article!',
@@ -106,9 +104,13 @@ export class ArticleService {
   }
 
   /** @todo: we should'nt display password in the following query result */
-  async getAllArticles(query: GetAllArticlesDto): Promise<ArticleEntity[]> {
+  async getAllArticles(
+    query: GetAllArticlesDto,
+    currentUserId: string,
+  ): Promise<ArticleEntity[]> {
+    this.articleRepository.find({ relations: {} });
     const limit = 5;
-    const { author, tag, page, orderByCreation } = query;
+    const { author, tag, page, orderByCreation, justFavorited } = query;
     const qb = this.articleRepository
       .createQueryBuilder('articles')
       .leftJoinAndSelect('articles.author', 'author')
@@ -126,7 +128,28 @@ export class ArticleService {
 
     if (tag) qb.andWhere('articles.tagsList LIKE :tag', { tag: `%${tag}%` });
 
-    return await qb.getMany();
+    const user = await this.userRepository.findOne({
+      where: { id: currentUserId },
+      relations: {
+        favortiedArticles: true,
+      },
+    });
+
+    const favoritedIds = user.favortiedArticles.map((ar) => ar.id);
+
+    if (justFavorited && user) {
+      qb.andWhere('articles.id IN(:...ids)', { ids: favoritedIds });
+    }
+
+    const articles = await qb.getMany();
+    const articlesByFavorited = articles.map((ar) => {
+      const favorited = favoritedIds.includes(ar.id);
+      return {
+        ...ar,
+        favorited,
+      };
+    });
+    return articlesByFavorited;
   }
 
   /** @todo: we should'nt display password in the following query result */

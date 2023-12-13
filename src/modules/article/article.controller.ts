@@ -70,8 +70,13 @@ export class ArticleController {
   getAllArticles(
     @Query()
     getAllArticlesQuery: GetAllArticlesDto,
+    @User('id')
+    currentUserId,
   ): Promise<ArticleEntity[]> {
-    return this.articleService.getAllArticles(getAllArticlesQuery);
+    return this.articleService.getAllArticles(
+      getAllArticlesQuery,
+      currentUserId,
+    );
   }
 
   /** get single article by slug */

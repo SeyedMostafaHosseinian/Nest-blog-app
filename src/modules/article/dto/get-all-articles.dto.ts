@@ -1,10 +1,9 @@
 import { Transform } from 'class-transformer';
 import {
+  IsBoolean,
   IsEnum,
   IsNumber,
   IsOptional,
-  IsString,
-  isNumber,
 } from 'class-validator';
 
 export class GetAllArticlesDto {
@@ -22,4 +21,8 @@ export class GetAllArticlesDto {
   @IsOptional()
   @IsEnum({ old: 'oldest', new: 'newest' })
   readonly orderByCreation: 'oldest' | 'newest';
+
+  @IsOptional()
+  @IsBoolean()
+  readonly justFavorited: string
 }
