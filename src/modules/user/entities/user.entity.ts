@@ -44,4 +44,11 @@ export class UserEntity {
   async hashPassword() {
     this.password = await hash(this.password, 10);
   }
+
+  @ManyToMany(() => UserEntity, (user) => user.followers )
+  following: UserEntity[]
+
+  @ManyToMany(() => UserEntity, (user) => user.following )
+  @JoinTable({name:'user_followers'})
+  followers: UserEntity[]
 }
