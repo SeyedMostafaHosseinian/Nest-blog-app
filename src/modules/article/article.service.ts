@@ -1,5 +1,6 @@
 import { ArticleController } from './article.controller';
 import {
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -18,6 +19,8 @@ export class ArticleService {
   constructor(
     @InjectRepository(ArticleEntity)
     private readonly articleRepository: Repository<ArticleEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
   ) {}
 
   async createArticle(
@@ -28,11 +31,40 @@ export class ArticleService {
     if (!createArticleDto?.tags) newArticle.tagsList = [];
     newArticle.tagsList = createArticleDto.tags;
     Object.assign(newArticle, createArticleDto);
-    console.log(newArticle);
     newArticle.author = currentUser;
     newArticle.slug = this.createSlug(newArticle);
 
     return await this.articleRepository.save(newArticle);
+  }
+
+  async likeAndFavoriteArticle(
+    currentUserId: string,
+    slug: string,
+  ): Promise<ArticleEntity> {
+    const article = await this.articleRepository.findOneBy({ slug });
+    if (!article) throw new NotFoundException('Article Not found!');
+
+    const user = await this.userRepository.findOne({
+      where: { id: currentUserId },
+      relations: { favortiedArticles: true },
+    });
+    if (!user) throw new NotFoundException('User Not found!');
+
+    const isNotFavorited =
+      user.favortiedArticles.findIndex(
+        (favoritedArticle) => favoritedArticle.id === article.id,
+      ) === -1;
+
+    if (isNotFavorited) {
+      user.favortiedArticles.push(article);
+      article.likesCount++;
+      await this.articleRepository.save(article);
+      await this.userRepository.save(user);
+    } else {
+      throw new ConflictException('this article is liked by this user!');
+    }
+
+    return article;
   }
 
   /** @todo: we should'nt display password in the following query result */
