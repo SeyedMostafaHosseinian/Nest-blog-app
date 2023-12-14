@@ -1,8 +1,12 @@
+import { UserEntity } from 'src/modules/user/entities/user.entity';
+
 export interface ProfileInterface {
   username: string;
   image: string;
   biography: string;
-  following: boolean;
+  isFollowing: boolean;
+  followers?: UserEntity[];
+  following?: UserEntity[];
 }
 
 export interface ProfileResponseInterface {
