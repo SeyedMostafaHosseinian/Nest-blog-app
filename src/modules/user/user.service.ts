@@ -13,8 +13,6 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { sign } from 'jsonwebtoken';
 import { compare } from 'bcrypt';
-import { AppRequest } from 'src/types/app-request.interface';
-import { threadId } from 'worker_threads';
 
 @Injectable()
 export class UserService {

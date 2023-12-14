@@ -1,5 +1,5 @@
 import { ProfileService } from './profile.service';
-import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { User } from 'src/decorators/user.decorator';
 import { ProfileResponseInterface } from './types/profile-response.interface';
 import { AuthGuard } from 'src/guards/auth.guard';

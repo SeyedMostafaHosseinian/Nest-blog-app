@@ -1,5 +1,4 @@
 import { ExecutionContext, createParamDecorator } from '@nestjs/common';
-import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
 import { AppRequest } from 'src/types/app-request.interface';
 
 export const User = createParamDecorator((data: any, ctx: ExecutionContext) => {
