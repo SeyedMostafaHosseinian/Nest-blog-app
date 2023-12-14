@@ -152,6 +152,36 @@ export class ArticleService {
     return articlesByFavorited;
   }
 
+  async getUserFeed(
+    getUserFeedQuery: GetAllArticlesDto,
+    currentUserId: string,
+  ) {
+    const { page } = getUserFeedQuery;
+    const user = await this.userRepository.findOne({
+      where: {
+        id: currentUserId,
+      },
+      relations: {
+        following: true,
+      },
+    });
+
+    if (!user) throw new NotFoundException('User not found!');
+
+    const userFollowingIds = user.following.map((f) => f.id);
+    const limit = 5;
+    const articles = await this.articleRepository
+      .createQueryBuilder('articles')
+      .leftJoinAndSelect('articles.author', 'author')
+      .where('author.id IN(:...ids)', { ids: userFollowingIds })
+      .orderBy('articles.created_at', 'DESC')
+      .take(limit)
+      .skip(((page || 1) - 1) * limit)
+      .getMany();
+
+    return articles;
+  }
+
   /** @todo: we should'nt display password in the following query result */
   async getArticleBySlug(slug: string): Promise<ArticleEntity> {
     const article = await this.articleRepository.findOneBy({ slug });

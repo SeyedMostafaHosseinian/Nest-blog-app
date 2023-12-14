@@ -28,6 +28,7 @@ export class ProfileService {
       },
       relations: {
         followers: true,
+        following: true,
       },
     });
 
@@ -40,7 +41,7 @@ export class ProfileService {
       image,
       isFollowing: targetUserFollowersIds.includes(currentUserId),
       followers: targetUser.followers,
-      following: targetUser.following
+      following: targetUser.following,
     };
   }
 
@@ -92,7 +93,7 @@ export class ProfileService {
       biography: targetUser.biography,
       image: targetUser.image,
       username: targetUser.username,
-      isFollowing: true
+      isFollowing: true,
     };
   }
 
@@ -100,7 +101,6 @@ export class ProfileService {
     targetUsername: string,
     currentUserId: string,
   ): Promise<ProfileInterface> {
-
     const targetUser = await this.userRepository.findOne({
       where: {
         username: targetUsername,
@@ -145,10 +145,10 @@ export class ProfileService {
     targetUser.followers.splice(followerIndex, 1);
     currentUser.following.splice(followingIndex, 1);
 
-    await this.userRepository.save(targetUser)
-    await this.userRepository.save(currentUser)
+    await this.userRepository.save(targetUser);
+    await this.userRepository.save(currentUser);
 
-   return {
+    return {
       biography: targetUser.biography,
       image: targetUser.image,
       username: targetUser.username,

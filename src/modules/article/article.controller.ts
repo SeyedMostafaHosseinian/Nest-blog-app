@@ -71,12 +71,23 @@ export class ArticleController {
     @Query()
     getAllArticlesQuery: GetAllArticlesDto,
     @User('id')
-    currentUserId,
+    currentUserId: string,
   ): Promise<ArticleEntity[]> {
     return this.articleService.getAllArticles(
       getAllArticlesQuery,
       currentUserId,
     );
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('feed')
+  getUserFeed(
+    @Query()
+    getUserFeedQuery: GetAllArticlesDto,
+    @User('id')
+    currentUserId: string,
+  ) {
+    return this.articleService.getUserFeed(getUserFeedQuery, currentUserId);
   }
 
   /** get single article by slug */
