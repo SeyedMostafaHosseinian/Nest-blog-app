@@ -7,11 +7,12 @@ import {
 import { CreateArticleDto } from './dto/create-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../user/entities/user.entity';
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, Repository, TreeRepository } from 'typeorm';
 import { ArticleEntity } from './article.entity';
 import { ArticleResponseInterface } from './types/article-response.interface';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { GetAllArticlesDto } from './dto/get-all-articles.dto';
+import { CommentEntity } from '../comment/comment.entity';
 
 @Injectable()
 export class ArticleService {
@@ -20,6 +21,8 @@ export class ArticleService {
     private readonly articleRepository: Repository<ArticleEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(CommentEntity)
+    private readonly commentRepository: TreeRepository<CommentEntity>,
   ) {}
 
   async createArticle(
@@ -183,9 +186,25 @@ export class ArticleService {
 
   /** @todo: we should'nt display password in the following query result */
   async getArticleBySlug(slug: string): Promise<ArticleEntity> {
-    const article = await this.articleRepository.findOneBy({ slug });
+    const article = await this.articleRepository.findOne({
+      where: { slug },
+    });
+
     if (!article) throw new NotFoundException('Article not found!');
-    return article;
+
+    let comments = await this.commentRepository.findTrees({
+      relations: ['article'],
+    });
+    comments = comments.filter((c) => c.article.id === article.id);
+
+    const optimizedComments = this.deleteAddtionalArticleProperty(
+      comments,
+    ) as CommentEntity[];
+
+    return {
+      ...article,
+      comments: [...optimizedComments],
+    };
   }
 
   async deleteArticle(
@@ -233,5 +252,23 @@ export class ArticleService {
 
   createArticleResponse(article: ArticleEntity): ArticleResponseInterface {
     return { article };
+  }
+
+  deleteAddtionalArticleProperty(comments: CommentEntity[]) {
+    /** sort by date (DESC) newst comments are in the top */
+    comments.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+
+    /** traverse on the child of comment and delete article property */
+    for (let comment of comments) {
+      delete comment.article;
+      if (comment.childrenComments.length) {
+        this.deleteAddtionalArticleProperty(comment.childrenComments);
+      }
+    }
+
+    return comments;
   }
 }

@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { hash } from 'bcrypt';
 import { ArticleEntity } from 'src/modules/article/article.entity';
+import { CommentEntity } from 'src/modules/comment/comment.entity';
 
 @Entity({ name: 'users' })
 export class UserEntity {
@@ -45,10 +46,13 @@ export class UserEntity {
     this.password = await hash(this.password, 10);
   }
 
-  @ManyToMany(() => UserEntity, (user) => user.followers )
-  following: UserEntity[]
+  @ManyToMany(() => UserEntity, (user) => user.followers)
+  following: UserEntity[];
 
-  @ManyToMany(() => UserEntity, (user) => user.following )
-  @JoinTable({name:'user_followers'})
-  followers: UserEntity[]
+  @ManyToMany(() => UserEntity, (user) => user.following)
+  @JoinTable({ name: 'user_followers' })
+  followers: UserEntity[];
+
+  @OneToMany(() => CommentEntity, (comment) => comment.author)
+  articleComments: CommentEntity[];
 }
