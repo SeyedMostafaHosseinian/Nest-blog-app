@@ -24,6 +24,4 @@ export class CommentController {
     return this.commentService.createCommentResponse(comment);
   }
 
-  @Get(':slug')
-  getArticleComments() {}
 }

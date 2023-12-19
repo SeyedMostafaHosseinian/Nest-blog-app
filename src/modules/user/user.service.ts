@@ -1,4 +1,6 @@
 import {
+  ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -13,6 +15,9 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { sign } from 'jsonwebtoken';
 import { compare } from 'bcrypt';
+import { ChangeUserRoleDto } from './dto/change-user-role.dto';
+import { RolesEnum } from '../article/types/roles.enum';
+import { ChangeRoleActionsEnum } from './types/action-change-role.enum';
 
 @Injectable()
 export class UserService {
@@ -97,6 +102,56 @@ export class UserService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  async changeUserRole(
+    targetUserId: string,
+    changeUserRoleDto: ChangeUserRoleDto,
+  ) {
+    const targetUser = await this.userRepository.findOneBy({
+      id: targetUserId,
+    });
+
+    const { action, targetRole } = changeUserRoleDto;
+
+    if (!targetUser) {
+      throw new NotFoundException('User not exist!');
+    }
+
+    if (targetRole === RolesEnum.Admin)
+      throw new ForbiddenException(
+        'you cannot promote or demote a user to or from admin role!',
+      );
+
+    if (targetRole === RolesEnum.Basic)
+      throw new ForbiddenException(
+        "'basic' role is a default roles and shoulden't remove or add from user roles!",
+      );
+
+    const isUserHaveTatgetRole = targetUser.roles.find((r) => targetRole === r);
+
+    switch (action) {
+      case ChangeRoleActionsEnum.PROMOTION: {
+        if (isUserHaveTatgetRole)
+          throw new ConflictException('this user already have target role!');
+
+        targetUser.roles.push(targetRole);
+        break;
+      }
+      case ChangeRoleActionsEnum.DEMOTION: {
+        if (!isUserHaveTatgetRole)
+          throw new ConflictException(
+            'this user is not have this target role!',
+          );
+
+        const targetRoleIndex = targetUser.roles.findIndex(targetRole as any);
+        targetUser.roles.splice(targetRoleIndex, 1);
+
+        break;
+      }
+    }
+    return await this.userRepository.save(targetUser);
+
   }
 
   generateJwt(user: UserEntity): string {

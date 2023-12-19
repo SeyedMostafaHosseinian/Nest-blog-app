@@ -16,6 +16,10 @@ import { UserLoginDto } from './dto/login-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { User } from 'src/decorators/user.decorator';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { Role } from 'src/decorators/role.decorator';
+import { RolesEnum } from '../article/types/roles.enum';
+import { ChangeUserRoleDto } from './dto/change-user-role.dto';
+import { AuthorizationGuard } from 'src/guards/authorization.guard';
 
 @Controller('users')
 export class UserController {
@@ -36,6 +40,8 @@ export class UserController {
   }
 
   @Get()
+  @UseGuards(AuthGuard, AuthorizationGuard)
+  @Role(RolesEnum.SubAdmin, RolesEnum.Admin)
   findAll(): Promise<UserEntity[]> {
     return this.userService.findAll();
   }
@@ -55,7 +61,19 @@ export class UserController {
     return this.userService.update(userId, updateUserDto);
   }
 
+  @Patch(':id/change-role')
+  @UseGuards(AuthGuard, AuthorizationGuard)
+  @Role(RolesEnum.SubAdmin, RolesEnum.Admin)
+  changeUserRole(
+    @Param('id') targetUserId: string,
+    @Body() changeUserRoleDto: ChangeUserRoleDto,
+  ) {
+    return this.userService.changeUserRole(targetUserId, changeUserRoleDto);
+  }
+
   @Delete(':id')
+  @UseGuards(AuthGuard, AuthorizationGuard)
+  @Role(RolesEnum.Admin)
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
   }

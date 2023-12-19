@@ -10,6 +10,7 @@ import {
 import { hash } from 'bcrypt';
 import { ArticleEntity } from 'src/modules/article/article.entity';
 import { CommentEntity } from 'src/modules/comment/comment.entity';
+import { RolesEnum } from 'src/modules/article/types/roles.enum';
 
 @Entity({ name: 'users' })
 export class UserEntity {
@@ -30,6 +31,14 @@ export class UserEntity {
 
   @Column({ default: '' })
   image: string;
+
+  @Column({
+    type: 'enum',
+    enum: RolesEnum,
+    array: true,
+    default: [RolesEnum.Basic]
+  })
+  roles: RolesEnum[];
 
   @OneToMany(() => ArticleEntity, (article) => article.author)
   articles: ArticleEntity[];
