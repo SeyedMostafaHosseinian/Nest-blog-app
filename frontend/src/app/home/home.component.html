@@ -1,8 +1,33 @@
 <div class="w-full block mt-10">
-    <div class="container mx-auto w-full">
-        <!-- title -->
-        <h2 class=" text-purple-600 font-bold text-4xl">HOME</h2>
-        <!-- line  -->
-        <span class="w-full block h-0.5 bg-gray-200"></span>
-    </div>
+  <div class="container mx-auto w-full">
+    <!-- title -->
+    <h2 class="text-purple-600 font-bold text-4xl">HOME</h2>
+    <!-- line  -->
+    <span class="w-full block h-0.5 bg-gray-200"></span>
+    <!-- latest articles -->
+    <section class="w-full flex gap-4 flex-wrap mt-8">
+      <h2 class="w-full block text-3xl font-bold">Latest Blog</h2>  
+      <ng-container *ngFor="let article of latestArticles">
+        <ng-container
+          *ngTemplateOutlet="
+            articleCard;
+            context: { title: article.title, description: article.description, author: article.author, date: article.created_at}
+          "
+        ></ng-container>
+      </ng-container>
+    </section>
+  </div>
 </div>
+
+<!-- article template -->
+<ng-template #articleCard let-title="title" let-description="description" let-author="author" let-date="date">
+    <div class="w-80 flex flex-col shadow-purple-400 shadow p-4 rounded-md">
+      <h4 class="text-2xl font-bold text-purple-500">{{ title }}</h4>
+      <div class="w-full flex flex-col">
+        <span>Author: {{author.username}}</span>
+        <span>Date: {{date | date}}</span>
+      </div>
+      <p class="text-gray-500 font-thin">{{description}}</p>
+      <button class="w-full bg-purple-500 text-white py-2 mt-4 rounded-sm shadow">ReadMore</button>
+    </div>
+</ng-template>
