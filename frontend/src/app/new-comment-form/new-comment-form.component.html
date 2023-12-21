@@ -1,0 +1,39 @@
+<div class="w-full flex flex-col p-4 rounded-md bg-gray-50">
+  <!-- title -->
+  <h2
+    class="w-full text-lg font-bold border-b-2 text-green-500 border-green-500"
+  >
+    add new comment
+  </h2>
+  <!-- form -->
+  <form [formGroup]="commentForm" class="w-full flex flex-col mt-4">
+    <!-- title input -->
+    <div class="w-full flex flex-col gap-y-1">
+      <label for="title">title*</label>
+      <input
+        class="w-full px-4 py-2 border-gray-300 border rounded-md h-12 outline-none"
+        formControlName="title"
+        id="title"
+        type="text"
+      />
+    </div>
+    <!-- description input -->
+    <div class="w-full flex flex-col gap-y-1 mt-2">
+      <label for="description">description*</label>
+      <textarea
+        class="w-full px-4 py-2 border-gray-300 border rounded-md h-20 outline-none"
+        formControlName="description"
+        id="description"
+      >
+      </textarea>
+    </div>
+    <!-- button -->
+    <button
+      (click)="createComment()"
+      type="button"
+      class="mt-4 px-4 py-2 bg-green-500 text-white flex justify-center items-center rounded-sm w-20"
+    >
+      send
+    </button>
+  </form>
+</div>

@@ -38,4 +38,10 @@ export class UserService {
   getUser() {
     return JSON.parse(localStorage.getItem('user') as string);
   }
+
+  getAccessTokenFromCookies() {
+    const cookiesArray = document.cookie.split(';')
+    const accessToken = cookiesArray.find(c => c.includes('accessToken'))?.split('=')[1]
+    return accessToken;
+  }
 }

@@ -11,6 +11,7 @@ import { AuthComponent } from './auth/auth.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ArticlePageComponent } from './article-page/article-page.component';
 import { CommentComponent } from './comment/comment.component';
+import { NewCommentFormComponent } from './new-comment-form/new-comment-form.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { CommentComponent } from './comment/comment.component';
     AuthComponent,
     ArticlePageComponent,
     CommentComponent,
+    NewCommentFormComponent,
   ],
   imports: [
     BrowserModule,
