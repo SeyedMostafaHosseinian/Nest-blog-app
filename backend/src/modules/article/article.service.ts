@@ -187,7 +187,9 @@ export class ArticleService {
   /** @todo: we should'nt display password in the following query result */
   async getArticleBySlug(slug: string): Promise<ArticleEntity> {
     const article = await this.articleRepository.findOne({
-      where: { slug },
+      where: { slug }, relations: {
+        author: true
+      }
     });
 
     if (!article) throw new NotFoundException('Article not found!');
