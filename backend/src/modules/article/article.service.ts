@@ -195,7 +195,7 @@ export class ArticleService {
     if (!article) throw new NotFoundException('Article not found!');
 
     let comments = await this.commentRepository.findTrees({
-      relations: ['article'],
+      relations: ['article', 'author'], 
     });
     comments = comments.filter((c) => c.article.id === article.id);
 
