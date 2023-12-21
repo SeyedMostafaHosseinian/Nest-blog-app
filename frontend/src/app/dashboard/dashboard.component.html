@@ -1,1 +1,26 @@
-<p>dashboard works!</p>
+<div class="w-full block">
+    <div class="w-full flex container mx-auto h-full flex-col">
+        <h2 class="text-md w-full mt-2 text-purple-500">home > dashboard</h2>
+        <!-- side menu -->
+        <ul class="w-96 p-4 flex flex-col bg-white rounded-md shadow mt-2 gap-y-2">
+            <h4 class="text-center font-bold text-orange-500 text-2xl border-b-2 border-orange-500 pb-1">{{user?.username}}</h4>
+            <li class="w-full bg-gray-100 p-2 rounded-sm">
+                <button class="font-bold text-purple-500">
+                    favorited articles
+                </button>
+            </li>
+            <li class="w-full bg-gray-100 p-2 rounded-sm">
+                <button class="font-bold text-purple-500">
+                    personal informations
+                </button>
+            </li>
+            <li class="w-full bg-gray-100 p-2 rounded-sm">
+                <button class="font-bold text-purple-500">
+                    contributed articles
+                </button>
+            </li>
+
+        </ul>
+
+    </div>
+</div>
