@@ -13,4 +13,10 @@ export class ArticleService {
       responseType: 'json',
     });
   }
+
+  getArticleBySlug(slug: string) {
+    return this.http.get(`http://localhost:3000/articles/${slug}`, {
+      responseType: 'json',
+    });
+  }
 }

@@ -27,6 +27,7 @@ import { ArticlePageComponent } from './article-page/article-page.component';
       { path: '', component: HomeComponent },
       { path: 'auth/:state', component: AuthComponent },
       { path: 'dashboard', component: DashboardComponent },
+      { path: 'article/:slug', component: ArticlePageComponent },
     ]),
     ReactiveFormsModule,
   ],
