@@ -1,0 +1,31 @@
+<div
+  class="w-full p-4 flex flex-col min-h-[100px] rounded-md border-2 border-gray-100 mt-1"
+  [ngClass]="{ 
+    'bg-gray-50': commentDescendantNumber == 1,
+    'bg-white': commentDescendantNumber == 2,
+    'bg-gray-100': commentDescendantNumber == 3,
+    'bg-gray-200': commentDescendantNumber == 4,
+
+  }"
+>
+  <div class="w-full flex gap-x-1">
+    <div class="w-full flex gap-x-2">
+      <span class="font-bold text-xl text-gray-800">
+        {{ comment.author.username }}
+      </span>
+      <span class="px-2 py-1 bg-yellow-500 flex items-center justify-center text-white rounded-md">
+        {{comment.createdAt | date }}
+      </span>
+    </div>
+  </div>
+  <h5>{{ comment.title }}</h5>
+  <p>{{ comment.description }}</p>
+  <div class="w-full mt-4">
+    <ng-container *ngFor="let comment of comment.childrenComments">
+      <app-comment
+        [comment]="comment"
+        [commentDescendantNumber]="commentDescendantNumber + 1"
+      ></app-comment>
+    </ng-container>
+  </div>
+</div>

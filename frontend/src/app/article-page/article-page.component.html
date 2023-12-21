@@ -1,16 +1,38 @@
-<div class="w-full flex">
-    <div class="container flex w-full mx-auto flex-col" *ngIf="artilceData">
-        <div class="w-full bg-white flex flex-col p-4 rounded-md my-2 shadow">
-            <h2 class="font-bold text-2xl text-blue-500 border-b-2 border-blue-500 pb-2">{{artilceData?.title}}</h2>
-            <div class="w-full flex items-center gap-x-2 mt-2">
-                <span class="bg-gray-100 p-2 flex items-center justify-center rounded-md ">published in: {{ artilceData.created_at | date}}</span>
-                <span class="bg-gray-100 p-2 flex items-center justify-center rounded-md ">author: {{artilceData.author.username}}</span>
-            </div>
-            <p class="text-blue-500 mt-8">{{artilceData.body}}</p>
-
-            <div class="w-full flex flex-col mt-4">
-                <h2 class="font-bold text-xl flex w-80 text-yellow-500 border-b-2 border-yellow-500 pb-2">Comments</h2>
-            </div>
+<div class="w-full flex h-auto">
+  <div class="container flex w-full mx-auto flex-col" *ngIf="artilceData">
+    <div
+      class="w-full bg-white flex flex-col p-4 rounded-md my-2 shadow h-auto"
+    >
+      <h2
+        class="font-bold text-2xl text-blue-500 border-b-2 border-blue-500 pb-2"
+      >
+        {{ artilceData?.title }}
+      </h2>
+      <div class="w-full flex items-center gap-x-2 mt-2">
+        <span
+          class="bg-gray-100 p-2 flex items-center justify-center rounded-md"
+          >published in: {{ artilceData.created_at | date }}</span
+        >
+        <span
+          class="bg-gray-100 p-2 flex items-center justify-center rounded-md"
+          >author: {{ artilceData.author.username }}</span
+        >
+      </div>
+      <p class="text-blue-500 mt-8">{{ artilceData.body }}</p>
+      <!-- comments -->
+      <div class="w-full flex flex-col mt-4">
+        <h2
+          class="font-bold text-xl flex w-80 text-yellow-500 border-b-2 border-yellow-500 pb-2"
+        >
+          Comments
+        </h2>
+        <div class="w-full flex flex-col mt-2 gap-y-1">
+          <ng-container *ngFor="let comment of artilceData.comments">
+            <app-comment [comment]="comment"></app-comment>
+          </ng-container>
         </div>
+      </div>
+
     </div>
+  </div>
 </div>

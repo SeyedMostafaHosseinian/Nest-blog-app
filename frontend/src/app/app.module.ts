@@ -10,6 +10,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AuthComponent } from './auth/auth.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ArticlePageComponent } from './article-page/article-page.component';
+import { CommentComponent } from './comment/comment.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { ArticlePageComponent } from './article-page/article-page.component';
     DashboardComponent,
     AuthComponent,
     ArticlePageComponent,
+    CommentComponent,
   ],
   imports: [
     BrowserModule,
