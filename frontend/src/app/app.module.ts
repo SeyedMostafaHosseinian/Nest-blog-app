@@ -7,6 +7,8 @@ import { HomeComponent } from './home/home.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import { AuthComponent } from './auth/auth.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -14,11 +16,16 @@ import { HttpClientModule } from '@angular/common/http';
     HeaderComponent,
     HomeComponent,
     DashboardComponent,
+    AuthComponent,
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
-    RouterModule.forRoot([{ path: '', component: HomeComponent }]),
+    RouterModule.forRoot([
+      { path: '', component: HomeComponent },
+      { path: 'auth/:state', component: AuthComponent },
+    ]),
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent],

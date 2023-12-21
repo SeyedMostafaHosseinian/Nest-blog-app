@@ -1,0 +1,37 @@
+<div class="container w-full flex mx-auto justify-center items-center mt-8">
+  <div class="w-96 p-4 bg-white shadow">
+    <div class="w-full h-full flex flex-col">
+      <!-- form data -->
+      <form [formGroup]="loginForm" class="w-full flex flex-col">
+        <h2
+          class="text-2xl font-bold text-purple-600 border-b-2 pb-2 border-gray-400 mb-2"
+        >
+          Login
+        </h2>
+        <!-- email -->
+        <div class="w-full flex flex-col">
+          <label for="email">email</label>
+          <input
+            class="outline-none border-gray-300 h-12 rounded-md border-2 px-2"
+            id="email"
+            type="text"
+            formControlName="email"
+          />
+        </div>
+        <!-- password -->
+        <div class="w-full flex flex-col mt-2">
+          <label for="pasword">pasword</label>
+          <input
+            class="outline-none border-gray-300 h-12 rounded-md border-2 px-2"
+            id="pasword"
+            type="password"
+            formControlName="password"
+
+          />
+        </div>
+        <!-- register button -->
+        <button [disabled]="loading" (click)="login()" type="button" class="w-full py-2 rounded-sm text-white bg-purple-500 mt-4  shadow-md">{{loading ? 'sending...' :'login'}}</button>
+      </form>
+    </div>
+  </div>
+</div>
