@@ -9,23 +9,43 @@
   }"
 >
   <div class="w-full flex gap-x-1">
-    <div class="w-full flex gap-x-2">
+    <div class="w-full flex gap-x-2 border-b-2 border-gray-200 pb-2">
       <span class="font-bold text-xl text-gray-800">
         {{ comment.author.username }}
       </span>
-      <span class="px-2 py-1 bg-yellow-500 flex items-center justify-center text-white rounded-md">
-        {{comment.createdAt | date }}
+      <span
+        class="px-2 py-1 bg-yellow-500 flex items-center justify-center text-white rounded-md"
+      >
+        {{ comment.createdAt | date }}
       </span>
     </div>
   </div>
-  <h5>{{ comment.title }}</h5>
+  <h5 class="font-bold text-md text-sky-950 mt-2">{{ comment.title }}</h5>
   <p>{{ comment.description }}</p>
   <div class="w-full mt-4">
     <ng-container *ngFor="let comment of comment.childrenComments">
       <app-comment
         [comment]="comment"
         [commentDescendantNumber]="commentDescendantNumber + 1"
+        [slug]="slug"
+        (replyAdded)="replyAdded.next('')"
       ></app-comment>
     </ng-container>
+  </div>
+  <!-- reply -->
+  <div class="w-full flex flex-col mt-2">
+    <button
+      (click)="toggleNewCommentForm()"
+      type="button"
+      class="flex w-16 items-center justify-center py-1 px-4 rounded-md bg-blue-500 text-white cursor-pointer"
+    >
+      {{ displayNewCommentForm ? "cancel" : "reply" }}
+    </button>
+    <app-new-comment-form
+      *ngIf="displayNewCommentForm"
+      [slug]="slug"
+      [commentParentId]="comment.id"
+      (commentCreated)="replyAdded.next('')"
+    ></app-new-comment-form>
   </div>
 </div>

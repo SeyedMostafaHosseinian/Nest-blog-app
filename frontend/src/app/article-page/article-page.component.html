@@ -28,12 +28,12 @@
         </h2>
         <div class="w-full flex flex-col mt-2 gap-y-1">
           <ng-container *ngFor="let comment of artilceData.comments">
-            <app-comment [comment]="comment"></app-comment>
+            <app-comment [comment]="comment" [slug]="artilceData.slug" (replyAdded)="getData()"></app-comment>
           </ng-container>
         </div>
         <!-- add new comment -->
         <div class="w-full mt-4">
-          <app-new-comment-form [slug]="artilceData.slug"></app-new-comment-form>
+          <app-new-comment-form [slug]="artilceData.slug" (commentCreated)="getData()"></app-new-comment-form>
         </div>
       </div>
 

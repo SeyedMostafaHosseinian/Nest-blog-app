@@ -30,10 +30,12 @@
     <!-- button -->
     <button
       (click)="createComment()"
+      [disabled]="loading"
       type="button"
+      [ngClass]="{ 'opacity-60': loading }"
       class="mt-4 px-4 py-2 bg-green-500 text-white flex justify-center items-center rounded-sm w-20"
     >
-      send
+      {{ loading ? "sending..." : "send" }}
     </button>
   </form>
 </div>

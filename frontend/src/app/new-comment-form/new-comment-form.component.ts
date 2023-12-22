@@ -1,5 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { finalize } from 'rxjs';
 import { ArticleService } from 'src/services/articles.service';
 
 @Component({
@@ -9,6 +10,9 @@ import { ArticleService } from 'src/services/articles.service';
 })
 export class NewCommentFormComponent implements OnInit {
   @Input() slug!: string;
+  @Input() commentParentId?: string;
+  @Output() commentCreated = new EventEmitter()
+  loading = false;
 
   commentForm!: FormGroup;
   constructor(
@@ -24,9 +28,16 @@ export class NewCommentFormComponent implements OnInit {
   }
 
   createComment() {
+    this.loading = true;
     const { title, description } = this.commentForm.getRawValue();
     this.articleService
-      .addCommentToArticle(this.slug, title, description)
-      .subscribe();
+      .addCommentToArticle(this.slug, title, description, this.commentParentId)
+      .pipe(finalize(() => {
+        this.loading = false;
+      }))
+      .subscribe((d) => {
+        this.commentCreated.next(d)
+        this.commentForm.reset()
+      });
   }
 }

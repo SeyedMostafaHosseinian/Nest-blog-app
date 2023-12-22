@@ -24,7 +24,7 @@ export class ArticleService {
     });
   }
 
-  addCommentToArticle(slug: string, title: string, description: string) {
+  addCommentToArticle(slug: string, title: string, description: string, commentParentId?:string) {
     const accessToken = this.userService.getAccessTokenFromCookies();
     const headers = new HttpHeaders({
       Authorization: `Bearer ${accessToken}`,
@@ -36,6 +36,7 @@ export class ArticleService {
         comment: {
           title,
           description,
+          ...commentParentId && {commentParentId}
         },
       },
       {
