@@ -18,10 +18,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "typeorm": "yarn build && typeorm -d dist/db/data-source.js",
-    "migration:generate": "yarn typeorm -- migration:generate ./db/migrations/migration",
-    "migration:run": "yarn typeorm -- migration:run",
-    "migration:revert": "yarn typeorm -- migration:revert"
+    "migration:generate": "yarn build && typeorm -d dist/db/data-source.js migration:generate ./db/migrations/migration",
+    "migration:run": "yarn build && typeorm -d dist/db/data-source.js migration:run",
+    "migration:revert": "yarn build && typeorm -d dist/db/data-source.js migration:revert"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
