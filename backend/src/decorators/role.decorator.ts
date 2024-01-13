@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { RolesEnum } from 'src/modules/article/types/roles.enum';
+import { RolesEnum } from 'src/types/role/roles.enum';
 
 export const HANDLER_REQUIRED_ROLES_METADATA_KEY = 'requiredRoles';
 

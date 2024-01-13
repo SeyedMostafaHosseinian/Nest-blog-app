@@ -16,7 +16,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { sign } from 'jsonwebtoken';
 import { compare } from 'bcrypt';
 import { ChangeUserRoleDto } from './dto/change-user-role.dto';
-import { RolesEnum } from '../article/types/roles.enum';
+import { RolesEnum } from '../../types/role/roles.enum';
 import { ChangeRoleActionsEnum } from './types/action-change-role.enum';
 
 @Injectable()

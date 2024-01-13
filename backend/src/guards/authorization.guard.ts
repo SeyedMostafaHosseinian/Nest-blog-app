@@ -2,7 +2,7 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { HANDLER_REQUIRED_ROLES_METADATA_KEY } from 'src/decorators/role.decorator';
-import { RolesEnum } from 'src/modules/article/types/roles.enum';
+import { RolesEnum } from 'src/types/role/roles.enum';
 
 @Injectable()
 export class AuthorizationGuard implements CanActivate {

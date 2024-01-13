@@ -10,11 +10,14 @@ import { AuthMiddleware } from './middlewares/auth.middleware';
 import { ArticleModule } from './modules/article/article.module';
 import { ProfileModule } from './modules/profile/profile.module';
 import { CommentModule } from './modules/comment/comment.module';
+import { AccessControlModule } from 'nest-access-control';
+import { premissionRoles } from './app.roles';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot(ormconfig),
+    AccessControlModule.forRoles(premissionRoles),
     TagsModule,
     UserModule,
     ArticleModule,

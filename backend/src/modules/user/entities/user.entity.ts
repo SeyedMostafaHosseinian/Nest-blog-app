@@ -10,7 +10,7 @@ import {
 import { hash } from 'bcrypt';
 import { ArticleEntity } from 'src/modules/article/article.entity';
 import { CommentEntity } from 'src/modules/comment/comment.entity';
-import { RolesEnum } from 'src/modules/article/types/roles.enum';
+import { RolesEnum } from 'src/types/role/roles.enum';
 
 @Entity({ name: 'users' })
 export class UserEntity {
