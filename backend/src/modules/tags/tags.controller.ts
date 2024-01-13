@@ -1,3 +1,4 @@
+import { ResourcesEnum } from 'src/types/role/resources.enum';
 import {
   Controller,
   Get,
@@ -11,18 +12,21 @@ import {
 import { TagsService } from './tags.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
-import { RolesEnum } from '../article/types/roles.enum';
-import { Role } from 'src/decorators/role.decorator';
 import { AuthGuard } from 'src/guards/auth.guard';
-import { AuthorizationGuard } from 'src/guards/authorization.guard';
+import { ACGuard, UseRoles } from 'nest-access-control';
 
+@UseGuards(ACGuard)
 @Controller('tags')
 export class TagsController {
   constructor(private readonly tagsService: TagsService) {}
 
   @Post()
-  @UseGuards(AuthGuard, AuthorizationGuard)
-  @Role(RolesEnum.Author)
+  @UseGuards(AuthGuard)
+  @UseRoles({
+    action: 'create',
+    resource: ResourcesEnum.CreateNewTag,
+    possession: 'any',
+  })
   create(@Body() createTagDto: CreateTagDto) {
     return this.tagsService.create(createTagDto);
   }
@@ -41,15 +45,23 @@ export class TagsController {
   }
 
   @Patch(':id')
-  @Role(RolesEnum.Author)
-  @UseGuards(AuthGuard, AuthorizationGuard)
+  @UseGuards(AuthGuard)
+  @UseRoles({
+    action: 'update',
+    resource: ResourcesEnum.UpdateTag,
+    possession: 'any',
+  })
   update(@Param('id') id: string, @Body() updateTagDto: UpdateTagDto) {
     return this.tagsService.update(+id, updateTagDto);
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard, AuthorizationGuard)
-  @Role(RolesEnum.Author)
+  @UseGuards(AuthGuard)
+  @UseRoles({
+    action: 'delete',
+    resource: ResourcesEnum.DeleteTag,
+    possession: 'any',
+  })
   remove(@Param('id') id: string) {
     return this.tagsService.remove(+id);
   }

@@ -19,19 +19,21 @@ import { UserEntity } from '../user/entities/user.entity';
 import { ArticleResponseInterface } from './types/article-response.interface';
 import { DeleteResult } from 'typeorm';
 import { GetAllArticlesDto } from './dto/get-all-articles.dto';
-import { Role } from 'src/decorators/role.decorator';
-import { RolesEnum } from './types/roles.enum';
-import { AuthorizationGuard } from 'src/guards/authorization.guard';
+import { ACGuard, UseRoles } from 'nest-access-control';
+import { ResourcesEnum } from 'src/types/role/resources.enum';
 
-
-@UseGuards(AuthorizationGuard)
+@UseGuards(ACGuard)
 @Controller('articles')
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
   /** create article */
   @Post()
   @UseGuards(AuthGuard)
-  @Role(RolesEnum.Author)
+  @UseRoles({
+    action: 'create',
+    resource: ResourcesEnum.CreateArticle,
+    possession: 'any',
+  })
   async createArticle(
     @User() currentUser: UserEntity,
     @Body('article') createArticleDto: CreateArticleDto,
@@ -108,7 +110,11 @@ export class ArticleController {
   /** delete article */
   @Delete(':slug')
   @UseGuards(AuthGuard)
-  @Role(RolesEnum.Author)
+  @UseRoles({
+    action: 'delete',
+    resource: ResourcesEnum.DeleteArticle,
+    possession: 'own',
+  })
   deleteArticle(
     @Param('slug') slug: string,
     @User('id') currentUserId: string,
@@ -118,7 +124,11 @@ export class ArticleController {
 
   @Put(':slug')
   @UseGuards(AuthGuard)
-  @Role(RolesEnum.Author)
+  @UseRoles({
+    resource: ResourcesEnum.UpdateArticle,
+    action: 'update',
+    possession: 'any',
+  })
   async updateArticle(
     @Param('slug') slug: string,
     @User() currentUser: UserEntity,

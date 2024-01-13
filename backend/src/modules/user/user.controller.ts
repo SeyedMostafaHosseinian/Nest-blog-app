@@ -16,11 +16,11 @@ import { UserLoginDto } from './dto/login-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { User } from 'src/decorators/user.decorator';
 import { AuthGuard } from 'src/guards/auth.guard';
-import { Role } from 'src/decorators/role.decorator';
-import { RolesEnum } from '../article/types/roles.enum';
 import { ChangeUserRoleDto } from './dto/change-user-role.dto';
-import { AuthorizationGuard } from 'src/guards/authorization.guard';
+import { ACGuard, UseRoles } from 'nest-access-control';
+import { ResourcesEnum } from 'src/types/role/resources.enum';
 
+@UseGuards(ACGuard)
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -40,8 +40,12 @@ export class UserController {
   }
 
   @Get()
-  @UseGuards(AuthGuard, AuthorizationGuard)
-  @Role(RolesEnum.SubAdmin, RolesEnum.Admin)
+  @UseGuards(AuthGuard)
+  @UseRoles({
+    resource: ResourcesEnum.ReadAllUsers,
+    action: 'read',
+    possession: 'any',
+  })
   findAll(): Promise<UserEntity[]> {
     return this.userService.findAll();
   }
@@ -62,8 +66,12 @@ export class UserController {
   }
 
   @Patch(':id/change-role')
-  @UseGuards(AuthGuard, AuthorizationGuard)
-  @Role(RolesEnum.SubAdmin, RolesEnum.Admin)
+  @UseGuards(AuthGuard)
+  @UseRoles({
+    action: 'update',
+    resource: ResourcesEnum.UpdateUserRole,
+    possession: 'any',
+  })
   changeUserRole(
     @Param('id') targetUserId: string,
     @Body() changeUserRoleDto: ChangeUserRoleDto,
@@ -72,8 +80,12 @@ export class UserController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard, AuthorizationGuard)
-  @Role(RolesEnum.Admin)
+  @UseGuards(AuthGuard)
+  @UseRoles({
+    action: 'delete',
+    resource: ResourcesEnum.DeleteUser,
+    possession: 'any',
+  })
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
   }
