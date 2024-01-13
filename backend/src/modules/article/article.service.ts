@@ -13,6 +13,7 @@ import { ArticleResponseInterface } from './types/article-response.interface';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { GetAllArticlesDto } from './dto/get-all-articles.dto';
 import { CommentEntity } from '../comment/comment.entity';
+import { RolesEnum } from 'src/types/role/roles.enum';
 
 @Injectable()
 export class ArticleService {
@@ -187,15 +188,16 @@ export class ArticleService {
   /** @todo: we should'nt display password in the following query result */
   async getArticleBySlug(slug: string): Promise<ArticleEntity> {
     const article = await this.articleRepository.findOne({
-      where: { slug }, relations: {
-        author: true
-      }
+      where: { slug },
+      relations: {
+        author: true,
+      },
     });
 
     if (!article) throw new NotFoundException('Article not found!');
 
     let comments = await this.commentRepository.findTrees({
-      relations: ['article', 'author'], 
+      relations: ['article', 'author'],
     });
     comments = comments.filter((c) => c.article.id === article.id);
 
@@ -212,7 +214,7 @@ export class ArticleService {
   async deleteArticle(
     slug: string,
     currentUserId: string,
-  ): Promise<DeleteResult> {
+  ): Promise<any> {
     const article = await this.articleRepository
       .createQueryBuilder('articles')
       .leftJoinAndSelect('articles.author', 'author')
@@ -221,12 +223,19 @@ export class ArticleService {
 
     if (!article) throw new NotFoundException('Article not found');
 
-    if (article.author.id !== currentUserId) {
+    if (
+      /** check author of this articles */
+      article.author.id !== currentUserId &&
+      /** check not admin or subadmin and just author */
+      article.author.roles.map((r) =>
+        ![RolesEnum.Admin, RolesEnum.SubAdmin].includes(r),
+      )
+    ) {
       throw new ForbiddenException(
-        'just Author of this article can delete this article',
+        'just Author of this article and admins and subadmin can delete this article',
       );
     }
-    return await this.articleRepository.delete({ slug: article.slug });
+    return await this.articleRepository.remove(article);
   }
 
   async updateArticle(

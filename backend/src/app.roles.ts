@@ -19,6 +19,7 @@ premissionRoles
   .extend(RolesEnum.Author)
   /** user */
   .readAny(ResourcesEnum.ReadAllUsers)
+  .updateAny(ResourcesEnum.UpdateUserRole)
 .grant(RolesEnum.Admin)
   .extend(RolesEnum.SubAdmin)
   /** user */

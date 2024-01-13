@@ -33,7 +33,9 @@ export class CommentEntity {
   @ManyToOne(() => UserEntity, (user) => user.articleComments)
   author: UserEntity;
 
-  @ManyToOne(() => ArticleEntity, (article) => article.comments)
+  @ManyToOne(() => ArticleEntity, (article) => article.comments, {
+    onDelete: 'CASCADE',
+  })
   article: ArticleEntity;
 
   @TreeParent()
