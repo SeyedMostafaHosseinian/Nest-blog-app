@@ -15,7 +15,7 @@ import { premissionRoles } from './app.roles';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot(ormconfig),
     AccessControlModule.forRoles(premissionRoles),
     TagsModule,
