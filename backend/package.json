@@ -20,7 +20,10 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "migration:generate": "yarn build && typeorm -d dist/db/data-source.js migration:generate ./db/migrations/migration",
     "migration:run": "yarn build && typeorm -d dist/db/data-source.js migration:run",
-    "migration:revert": "yarn build && typeorm -d dist/db/data-source.js migration:revert"
+    "migration:revert": "yarn build && typeorm -d dist/db/data-source.js migration:revert",
+    "deps:start": "docker compose -f ./deps/docker-compose.yaml up -d",
+    "deps:kill": "docker compose -f ./deps/docker-compose.yaml kill",
+    "deps:restart": "yarn deps:kill && yarn deps:start"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

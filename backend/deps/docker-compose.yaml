@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  blog-app-postgres:
+    env_file: ./.env
+    container_name: ${DEPS_POSTGRES_CONTAINER_NAME}
+    image: postgres:15
+    environment:
+      - PGUSER=${DEPS_POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${DEPS_POSTGRES_PASSWORD}
+    volumes:
+      - ${DEPS_VOLUME_BASE_PATH}/postgres-volume-data:/var/lib/postgresql/data
+    ports:
+      - ${DEPS_POSTGRES_PORT}:5432
+  minio-blog-app:
+    env_file: ./.env
+    image: docker.io/bitnami/minio:2022
+    container_name: ${DEPS_MINIO_CONTAINER_NAME}
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - ${DEPS_VOLUME_BASE_PATH}/minio:/data
+    environment:
+      - MINIO_ROOT_USER=${DEPS_MINIO_ROOT_USERNAME}
+      - MINIO_ROOT_PASSWORD=${DEPS_MINIO_PASSWORD}
+      - MINIO_DEFAULT_BUCKETS=${DEPS_MINIO_DEFAULT_BUCKET}
