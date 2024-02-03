@@ -11,7 +11,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserResponseInerface } from './types/user-response.interface';
+import { UserResponseInterface } from './types/user-response.interface';
 import { UserLoginDto } from './dto/login-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { User } from 'src/decorators/user.decorator';
@@ -26,16 +26,16 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('signup')
-  singup(
+  signup(
     @Body('user') createUserDto: CreateUserDto,
-  ): Promise<UserResponseInerface> {
+  ): Promise<UserResponseInterface> {
     return this.userService.createUser(createUserDto);
   }
 
   @Post('login')
   login(
     @Body('user') userLoginDto: UserLoginDto,
-  ): Promise<UserResponseInerface> {
+  ): Promise<UserResponseInterface> {
     return this.userService.login(userLoginDto);
   }
 
@@ -52,7 +52,7 @@ export class UserController {
 
   @Get('user')
   @UseGuards(AuthGuard)
-  findOne(@User() user: UserEntity): UserResponseInerface {
+  findOne(@User() user: UserEntity): UserResponseInterface {
     return this.userService.createUserResponse(user);
   }
 
@@ -61,7 +61,7 @@ export class UserController {
   update(
     @User('id') userId: string,
     @Body('user') updateUserDto: UpdateUserDto,
-  ): Promise<UserResponseInerface> {
+  ): Promise<UserResponseInterface> {
     return this.userService.update(userId, updateUserDto);
   }
 

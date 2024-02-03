@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { UserResponseInerface } from './types/user-response.interface';
+import { UserResponseInterface } from './types/user-response.interface';
 import { UserLoginDto } from './dto/login-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -28,7 +28,7 @@ export class UserService {
 
   async createUser(
     createUserDto: CreateUserDto,
-  ): Promise<UserResponseInerface> {
+  ): Promise<UserResponseInterface> {
     //check username and email
     const existUserByEmail = await this.userRepository.findOneBy({
       email: createUserDto.email,
@@ -51,7 +51,7 @@ export class UserService {
     return this.createUserResponse(savedUser);
   }
 
-  async login(userLoginDto: UserLoginDto): Promise<UserResponseInerface> {
+  async login(userLoginDto: UserLoginDto): Promise<UserResponseInterface> {
     /** find user */
     const user = await this.userRepository.findOneBy({
       email: userLoginDto.email,
@@ -92,7 +92,7 @@ export class UserService {
   async update(
     id: string,
     updateUserDto: UpdateUserDto,
-  ): Promise<UserResponseInerface> {
+  ): Promise<UserResponseInterface> {
     const user = await this.findUserById(id);
     Object.assign(user, updateUserDto);
 
@@ -125,21 +125,21 @@ export class UserService {
 
     if (targetRole === RolesEnum.Basic)
       throw new ForbiddenException(
-        "'basic' role is a default roles and shoulden't remove or add from user roles!",
+        "'basic' role is a default roles and shouldn't remove or add from user roles!",
       );
 
-    const isUserHaveTatgetRole = targetUser.roles.find((r) => targetRole === r);
+    const isUserHaveTargetRole = targetUser.roles.find((r) => targetRole === r);
 
     switch (action) {
       case ChangeRoleActionsEnum.PROMOTION: {
-        if (isUserHaveTatgetRole)
+        if (isUserHaveTargetRole)
           throw new ConflictException('this user already have target role!');
 
         targetUser.roles.push(targetRole);
         break;
       }
       case ChangeRoleActionsEnum.DEMOTION: {
-        if (!isUserHaveTatgetRole)
+        if (!isUserHaveTargetRole)
           throw new ConflictException(
             'this user is not have this target role!',
           );
@@ -171,7 +171,7 @@ export class UserService {
     );
   }
 
-  createUserResponse(user: UserEntity): UserResponseInerface {
+  createUserResponse(user: UserEntity): UserResponseInterface {
     const token = this.generateJwt(user);
     delete user.password;
     return {

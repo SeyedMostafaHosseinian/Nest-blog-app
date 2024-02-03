@@ -24,5 +24,5 @@ export class GetAllArticlesDto {
 
   @IsOptional()
   @IsBoolean()
-  readonly justFavorited: string
+  readonly justFavored: string
 }

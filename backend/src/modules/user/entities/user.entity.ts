@@ -47,8 +47,8 @@ export class UserEntity {
   contributedArticles: ArticleEntity[];
 
   @ManyToMany(() => ArticleEntity)
-  @JoinTable({ name: 'users_favorited_articles' })
-  favortiedArticles: ArticleEntity[];
+  @JoinTable({ name: 'users_favored_articles' })
+  favoredArticles: ArticleEntity[];
 
   @BeforeInsert()
   async hashPassword() {

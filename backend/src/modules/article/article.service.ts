@@ -7,7 +7,7 @@ import {
 import { CreateArticleDto } from './dto/create-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../user/entities/user.entity';
-import { DeleteResult, Repository, TreeRepository } from 'typeorm';
+import { Repository, TreeRepository } from 'typeorm';
 import { ArticleEntity } from './article.entity';
 import { ArticleResponseInterface } from './types/article-response.interface';
 import { UpdateArticleDto } from './dto/update-article.dto';
@@ -49,17 +49,17 @@ export class ArticleService {
 
     const user = await this.userRepository.findOne({
       where: { id: currentUserId },
-      relations: { favortiedArticles: true },
+      relations: { favoredArticles: true },
     });
     if (!user) throw new NotFoundException('User Not found!');
 
-    const isNotFavorited =
-      user.favortiedArticles.findIndex(
-        (favoritedArticle) => favoritedArticle.id === article.id,
+    const isNotFavored =
+      user.favoredArticles.findIndex(
+        (favoredArticle) => favoredArticle.id === article.id,
       ) === -1;
 
-    if (isNotFavorited) {
-      user.favortiedArticles.push(article);
+    if (isNotFavored) {
+      user.favoredArticles.push(article);
       article.likesCount++;
       await this.articleRepository.save(article);
       await this.userRepository.save(user);
@@ -79,18 +79,18 @@ export class ArticleService {
 
     const user = await this.userRepository.findOne({
       where: { id: currentUserId },
-      relations: { favortiedArticles: true },
+      relations: { favoredArticles: true },
     });
     if (!user) throw new NotFoundException('User Not found!');
 
-    const isFavorited =
-      user.favortiedArticles.findIndex(
-        (favoritedArticle) => favoritedArticle.id === article.id,
+    const isFavored =
+      user.favoredArticles.findIndex(
+        (favoredArticle) => favoredArticle.id === article.id,
       ) !== -1;
 
-    if (isFavorited) {
-      user.favortiedArticles = user.favortiedArticles.filter(
-        (favoritedArticle) => favoritedArticle.id !== article.id,
+    if (isFavored) {
+      user.favoredArticles = user.favoredArticles.filter(
+        (favoredArticle) => favoredArticle.id !== article.id,
       );
 
       article.likesCount--;
@@ -113,7 +113,7 @@ export class ArticleService {
   ): Promise<ArticleEntity[]> {
     this.articleRepository.find({ relations: {} });
     const limit = 5;
-    const { author, tag, page, orderByCreation, justFavorited } = query;
+    const { author, tag, page, orderByCreation, justFavored: justFavored } = query;
     const qb = this.articleRepository
       .createQueryBuilder('articles')
       .leftJoinAndSelect('articles.author', 'author')
@@ -134,25 +134,25 @@ export class ArticleService {
     const user = await this.userRepository.findOne({
       where: { id: currentUserId },
       relations: {
-        favortiedArticles: true,
+        favoredArticles: true,
       },
     });
 
-    const favoritedIds = user.favortiedArticles.map((ar) => ar.id);
+    const favoredIds = user.favoredArticles.map((ar) => ar.id);
 
-    if (justFavorited && user) {
-      qb.andWhere('articles.id IN(:...ids)', { ids: favoritedIds });
+    if (justFavored && user) {
+      qb.andWhere('articles.id IN(:...ids)', { ids: favoredIds });
     }
 
     const articles = await qb.getMany();
-    const articlesByFavorited = articles.map((ar) => {
-      const favorited = favoritedIds.includes(ar.id);
+    const articlesByFavored = articles.map((ar) => {
+      const favored = favoredIds.includes(ar.id);
       return {
         ...ar,
-        favorited,
+        favored: favored,
       };
     });
-    return articlesByFavorited;
+    return articlesByFavored;
   }
 
   async getUserFeed(
@@ -201,7 +201,7 @@ export class ArticleService {
     });
     comments = comments.filter((c) => c.article.id === article.id);
 
-    const optimizedComments = this.deleteAddtionalArticleProperty(
+    const optimizedComments = this.deleteAdditionalArticleProperty(
       comments,
     ) as CommentEntity[];
 
@@ -226,13 +226,13 @@ export class ArticleService {
     if (
       /** check author of this articles */
       article.author.id !== currentUserId &&
-      /** check not admin or subadmin and just author */
+      /** check not admin or sub_admin and just author */
       article.author.roles.map((r) =>
         ![RolesEnum.Admin, RolesEnum.SubAdmin].includes(r),
       )
     ) {
       throw new ForbiddenException(
-        'just Author of this article and admins and subadmin can delete this article',
+        'just Author of this article and admins and sub_admin can delete this article',
       );
     }
     return await this.articleRepository.remove(article);
@@ -265,8 +265,8 @@ export class ArticleService {
     return { article };
   }
 
-  deleteAddtionalArticleProperty(comments: CommentEntity[]) {
-    /** sort by date (DESC) newst comments are in the top */
+  deleteAdditionalArticleProperty(comments: CommentEntity[]) {
+    /** sort by date (DESC) newest comments are in the top */
     comments.sort(
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
@@ -276,7 +276,7 @@ export class ArticleService {
     for (let comment of comments) {
       delete comment.article;
       if (comment.childrenComments.length) {
-        this.deleteAddtionalArticleProperty(comment.childrenComments);
+        this.deleteAdditionalArticleProperty(comment.childrenComments);
       }
     }
 
