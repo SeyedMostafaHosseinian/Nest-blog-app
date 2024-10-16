@@ -38,3 +38,5 @@ lerna-debug.log*
 
 .yarn/
 vols/
+
+api.sqlite

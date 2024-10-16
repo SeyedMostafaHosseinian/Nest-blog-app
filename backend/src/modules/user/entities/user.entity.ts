@@ -33,10 +33,10 @@ export class UserEntity {
   image: string;
 
   @Column({
-    type: 'enum',
+    type: 'simple-enum',
     enum: RolesEnum,
     array: true,
-    default: [RolesEnum.Basic]
+    default: RolesEnum.Basic,
   })
   roles: RolesEnum[];
 
