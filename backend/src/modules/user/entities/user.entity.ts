@@ -8,9 +8,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { hash } from 'bcrypt';
-import { ArticleEntity } from 'src/modules/article/article.entity';
-import { CommentEntity } from 'src/modules/comment/comment.entity';
-import { RolesEnum } from 'src/types/role/roles.enum';
+import { RolesEnum } from '../../../types/role/roles.enum';
+import { CommentEntity } from '../../comment/comment.entity';
+import { ArticleEntity } from '../../article/article.entity';
 
 @Entity({ name: 'users' })
 export class UserEntity {

@@ -1,8 +1,15 @@
 import { ProfileService } from './profile.service';
-import { Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
-import { User } from 'src/decorators/user.decorator';
+import {
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import { User } from '../../decorators/user.decorator';
 import { ProfileResponseInterface } from './types/profile-response.interface';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthGuard } from '../../guards/auth.guard';
 
 @Controller('profile')
 export class ProfileController {
@@ -23,22 +30,26 @@ export class ProfileController {
   @UseGuards(AuthGuard)
   @Post(':username/follow')
   async followUser(
-    @Param('username') targetUsername:string,
-    @User('id') currentUserId: string
+    @Param('username') targetUsername: string,
+    @User('id') currentUserId: string,
   ): Promise<ProfileResponseInterface> {
-    const profile = await this.profileService.handleFollowingUser(targetUsername,currentUserId);
+    const profile = await this.profileService.handleFollowingUser(
+      targetUsername,
+      currentUserId,
+    );
     return this.profileService.createProfileResponse(profile);
   }
 
   @UseGuards(AuthGuard)
   @Delete(':username/follow')
   async unfollowUser(
-    @Param('username') targetUsername:string,
-    @User('id') currentUserId: string
+    @Param('username') targetUsername: string,
+    @User('id') currentUserId: string,
   ): Promise<ProfileResponseInterface> {
-    const profile = await this.profileService.handleUnfollowingUser(targetUsername,currentUserId);
+    const profile = await this.profileService.handleUnfollowingUser(
+      targetUsername,
+      currentUserId,
+    );
     return this.profileService.createProfileResponse(profile);
   }
-
-
 }

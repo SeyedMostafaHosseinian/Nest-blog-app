@@ -1,8 +1,8 @@
+import { RolesEnum } from './../types/role/roles.enum';
+import { HANDLER_REQUIRED_ROLES_METADATA_KEY } from '../decorators/role.decorator';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
-import { HANDLER_REQUIRED_ROLES_METADATA_KEY } from 'src/decorators/role.decorator';
-import { RolesEnum } from 'src/types/role/roles.enum';
 
 @Injectable()
 export class AuthorizationGuard implements CanActivate {

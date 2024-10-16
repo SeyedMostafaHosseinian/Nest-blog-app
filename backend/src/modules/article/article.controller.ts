@@ -1,5 +1,5 @@
 import { UpdateArticleDto } from './dto/update-article.dto';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthGuard } from '../../guards/auth.guard';
 import { ArticleService } from './article.service';
 import {
   Body,
@@ -12,7 +12,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { User } from 'src/decorators/user.decorator';
+import { User } from '../../decorators/user.decorator';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { ArticleEntity } from './article.entity';
 import { UserEntity } from '../user/entities/user.entity';
@@ -20,7 +20,7 @@ import { ArticleResponseInterface } from './types/article-response.interface';
 import { DeleteResult } from 'typeorm';
 import { GetAllArticlesDto } from './dto/get-all-articles.dto';
 import { ACGuard, UseRoles } from 'nest-access-control';
-import { ResourcesEnum } from 'src/types/role/resources.enum';
+import { ResourcesEnum } from '../../types/role/resources.enum';
 
 @UseGuards(ACGuard)
 @Controller('articles')

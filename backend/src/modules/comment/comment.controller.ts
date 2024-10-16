@@ -2,8 +2,8 @@ import { CommentService } from './comment.service';
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { CreateCommentDto } from './dtos/create-comment.dto';
 import { CommentResponse } from './types/comment-response.interface';
-import { User } from 'src/decorators/user.decorator';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { User } from '../../decorators/user.decorator';
+import { AuthGuard } from '../../guards/auth.guard';
 
 @Controller('comments')
 export class CommentController {
@@ -23,5 +23,4 @@ export class CommentController {
     );
     return this.commentService.createCommentResponse(comment);
   }
-
 }

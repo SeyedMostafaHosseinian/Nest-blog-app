@@ -1,3 +1,6 @@
+import { AuthGuard } from '../../guards/auth.guard';
+import { ResourcesEnum } from '../../types/role/resources.enum';
+import { User } from '../../decorators/user.decorator';
 import {
   Controller,
   Get,
@@ -14,11 +17,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseInterface } from './types/user-response.interface';
 import { UserLoginDto } from './dto/login-user.dto';
 import { UserEntity } from './entities/user.entity';
-import { User } from 'src/decorators/user.decorator';
-import { AuthGuard } from 'src/guards/auth.guard';
 import { ChangeUserRoleDto } from './dto/change-user-role.dto';
 import { ACGuard, UseRoles } from 'nest-access-control';
-import { ResourcesEnum } from 'src/types/role/resources.enum';
 
 @UseGuards(ACGuard)
 @Controller('users')

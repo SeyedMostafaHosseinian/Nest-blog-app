@@ -1,4 +1,4 @@
-import { UserEntity } from 'src/modules/user/entities/user.entity';
+import { UserEntity } from '../../user/entities/user.entity';
 
 export interface ProfileInterface {
   username: string;

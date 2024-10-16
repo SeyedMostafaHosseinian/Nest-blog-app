@@ -13,7 +13,7 @@ import { ArticleResponseInterface } from './types/article-response.interface';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { GetAllArticlesDto } from './dto/get-all-articles.dto';
 import { CommentEntity } from '../comment/comment.entity';
-import { RolesEnum } from 'src/types/role/roles.enum';
+import { RolesEnum } from '../../types/role/roles.enum';
 
 @Injectable()
 export class ArticleService {
@@ -113,7 +113,13 @@ export class ArticleService {
   ): Promise<ArticleEntity[]> {
     this.articleRepository.find({ relations: {} });
     const limit = 5;
-    const { author, tag, page, orderByCreation, justFavored: justFavored } = query;
+    const {
+      author,
+      tag,
+      page,
+      orderByCreation,
+      justFavored: justFavored,
+    } = query;
     const qb = this.articleRepository
       .createQueryBuilder('articles')
       .leftJoinAndSelect('articles.author', 'author')
@@ -211,10 +217,7 @@ export class ArticleService {
     };
   }
 
-  async deleteArticle(
-    slug: string,
-    currentUserId: string,
-  ): Promise<any> {
+  async deleteArticle(slug: string, currentUserId: string): Promise<any> {
     const article = await this.articleRepository
       .createQueryBuilder('articles')
       .leftJoinAndSelect('articles.author', 'author')
@@ -227,8 +230,8 @@ export class ArticleService {
       /** check author of this articles */
       article.author.id !== currentUserId &&
       /** check not admin or sub_admin and just author */
-      article.author.roles.map((r) =>
-        ![RolesEnum.Admin, RolesEnum.SubAdmin].includes(r),
+      article.author.roles.map(
+        (r) => ![RolesEnum.Admin, RolesEnum.SubAdmin].includes(r),
       )
     ) {
       throw new ForbiddenException(
