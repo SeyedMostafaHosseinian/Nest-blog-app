@@ -1,4 +1,4 @@
-import { ResourcesEnum } from 'src/types/role/resources.enum';
+import { ResourcesEnum } from '../../types/role/resources.enum';
 import {
   Controller,
   Get,
